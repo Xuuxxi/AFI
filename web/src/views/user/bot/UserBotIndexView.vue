@@ -1,0 +1,239 @@
+<template>
+  <div class="container">
+    <div class="row">
+      <div class="col-3">
+        <div class="card" style="margin-top: 20px">
+          <div class="card-body">
+            <img :src="$store.state.user.photo" alt="" style="width: 100%;">
+          </div>
+        </div>
+      </div>
+      <div class="col-9">
+        <div class="card" style="margin-top: 20px">
+          <div class="card-header">
+            <span style="font-size: 130%">我的Bot</span> <button type="button" class="btn btn-primary float-end"
+              data-bs-toggle="modal" data-bs-target="#addBotBut">新增Bot</button>
+          </div>
+          <div class="card-body">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">名称</th>
+                  <th scope="col">创建时间</th>
+                  <th scope="col">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="bot in bots" :key="bot.id">
+                  <td>{{bot.title}}</td>
+                  <td>{{bot.createtime}}</td>
+                  <td>
+                    <button type="button" class="btn btn-secondary" style="margin-right: 10px" data-bs-toggle="modal"
+                      :data-bs-target="'#updBotBut' + bot.id">修改</button>
+                    <button type="button" class="btn btn-danger" @click="delBot(bot)">删除</button>
+
+                    <!--modal-->
+                    <div class="modal fade" :id="'updBotBut' + bot.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+                      aria-hidden="true">
+                      <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">修改Bot: {{bot.title}}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="mb-3">
+                              <label for="botTitle" class="form-label">名称</label>
+                              <input type="text" class="form-control" id="botTitle" placeholder="请输入Bot名称"
+                                v-model="bot.title">
+                            </div>
+                            <div class="mb-3">
+                              <label for="botDesc" class="form-label">简介</label>
+                              <textarea class="form-control" id="botDesc" rows="3" placeholder="请输入Bot简介"
+                                v-model="bot.description"></textarea>
+                            </div>
+                            <div class="mb-3">
+                              <label for="botContent" class="form-label">代码</label>
+                              <textarea class="form-control" id="botContent" rows="7" placeholder="请输入Bot代码"
+                                v-model="bot.content"></textarea>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="error_message">{{bot.error_message}}</div>
+                            <button type="button" class="btn btn-primary" @click="updBot(bot)">确定</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--modal-->
+  <!-- Modal -->
+  <div class="modal fade" id="addBotBut" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">新增Bot信息</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="botTitle" class="form-label">名称</label>
+            <input type="text" class="form-control" id="botTitle" placeholder="请输入Bot名称" v-model="add_bot.title">
+          </div>
+          <div class="mb-3">
+            <label for="botDesc" class="form-label">简介</label>
+            <textarea class="form-control" id="botDesc" rows="3" placeholder="请输入Bot简介"
+              v-model="add_bot.description"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="botContent" class="form-label">代码</label>
+            <textarea class="form-control" id="botContent" rows="7" placeholder="请输入Bot代码"
+              v-model="add_bot.content"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="error_message">{{add_bot.error_message}}</div>
+          <button type="button" class="btn btn-primary" @click="addBot">确定</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import $ from 'jquery'
+import { useStore } from 'vuex'
+import { ref, reactive } from 'vue'
+import { Modal } from 'bootstrap/dist/js/bootstrap'
+
+export default {
+  components: {
+  },
+
+  setup() {
+    const store = useStore();
+    let bots = ref([]);
+
+    const add_bot = reactive({
+      title: '',
+      description: '',
+      content: '',
+      error_message: ''
+    });
+
+    const getBotInfo = () => {
+      $.ajax({
+        url: 'http://localhost:3000/user/bot/getlist/',
+        type: 'get',
+        headers: {
+          Authorization: "Bearer " + store.state.user.token
+        },
+        success(resp) {
+          console.log(resp);
+          bots.value = resp;
+        },
+        error(resp) {
+          console.log(resp);
+        }
+      })
+    }
+
+    getBotInfo();
+
+    const addBot = () => {
+      add_bot.error_message = '';
+      $.ajax({
+        url: 'http://localhost:3000/user/bot/add/',
+        type: 'post',
+        headers: {
+          Authorization: "Bearer " + store.state.user.token
+        },
+        data: {
+          title: add_bot.title,
+          description: add_bot.description,
+          content: add_bot.content
+        },
+        success(resp) {
+          if (resp.error_message === 'success') {
+            add_bot.title = '',
+              add_bot.description = '',
+              add_bot.content = '',
+              add_bot.error_message = '',
+              Modal.getInstance('#addBotBut').hide();
+            getBotInfo();
+          } else add_bot.error_message = resp.error_message;
+        }
+      })
+    }
+
+    const updBot = (bot) => {
+      bot.error_message = '';
+      $.ajax({
+        url: 'http://localhost:3000/user/bot/update/',
+        type: 'post',
+        headers: {
+          Authorization: "Bearer " + store.state.user.token
+        },
+        data: {
+          bot_id: bot.id,
+          title: bot.title,
+          description: bot.description,
+          content: bot.content,
+        },
+        success(resp){
+          if(resp.error_message === 'success'){
+            bot.error_message = '';
+            Modal.getInstance('#updBotBut' + bot.id).hide();
+            getBotInfo();
+          }else bot.error_message = resp.error_message;
+        }
+      })
+    }
+
+    const delBot = (bot) => {
+      $.ajax({
+        url: 'http://localhost:3000/user/bot/remove/',
+        type: 'post',
+        headers: {
+          Authorization: "Bearer " + store.state.user.token
+        },
+        data: {
+          bot_id: bot.id
+        },
+        success(resp){
+          if(resp.error_message === 'success'){
+            getBotInfo();
+          }
+        }
+      })
+    }
+
+    return {
+      bots,
+      getBotInfo,
+      add_bot,
+      addBot,
+      updBot,
+      delBot
+    }
+  }
+}
+</script>
+
+<style scoped>
+div.error_message {
+  color: red;
+}
+</style>
