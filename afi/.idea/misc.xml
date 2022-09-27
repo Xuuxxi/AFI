@@ -6,6 +6,8 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/mainBackend/pom.xml" />
+        <option value="$PROJECT_DIR$/matchingSystem/pom.xml" />
+        <option value="$PROJECT_DIR$/botrunningsystem/pom.xml" />
       </list>
     </option>
   </component>

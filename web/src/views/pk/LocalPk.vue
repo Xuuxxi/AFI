@@ -1,17 +1,17 @@
 <template>
-    <PlayGround v-if="$store.state.pk.status === 'playing'" />
+    <LocalPlayGround v-if="$store.state.pk.status === 'playing'" />
     <LocalResult v-if="$store.state.pk.loser != 'none'"></LocalResult>
 </template>
 
 <script>
-import PlayGround from '@/components/PlayGround.vue';
+import LocalPlayGround from '@/components/LocalPlayGround.vue';
 import { onMounted, onUnmounted } from 'vue'
 import { useStore } from 'vuex';
 import LocalResult from '@/components/LocalResult.vue';
 
 export default {
   components: {
-    PlayGround,
+    LocalPlayGround,
     LocalResult
 },
   setup() {

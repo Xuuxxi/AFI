@@ -3,21 +3,21 @@
         <div class="result-board-text" v-if="$store.state.pk.loser === 'all'">
             平局
         </div>
-        <div class="result-board-text" v-else-if="$store.state.pk.loser === 'A' && $store.state.pk.a_id === parseInt($store.state.user.id)">
-            你输了
-        </div>
-        <div class="result-board-text" v-else-if="$store.state.pk.loser === 'B' && $store.state.pk.b_id === parseInt($store.state.user.id)">
-            你输了
-        </div>
         <div class="result-board-text" v-else>
-            你赢了！
+            玩家{{$store.state.pk.loser}}胜利
+        </div>
+        <div class="score_text">
+            玩家A分数: {{$store.state.pk.a_score}}
+        </div>
+        <div class="score_text">
+            玩家B分数: {{$store.state.pk.b_score}}
         </div>
         <div class="result-board-btn">
             <button @click="restart" type="button" class="btn btn-warning btn-lg">
                 再来!
             </button>
         </div>
-    </div>    
+    </div>
 </template>
 
 <script>
@@ -52,17 +52,26 @@ div.result-board {
     top: 30vh;
     left: 35vw;
 }
+
 div.result-board-text {
     text-align: center;
     color: white;
     font-size: 50px;
     font-weight: 600;
     font-style: italic;
-    padding-top: 5vh;
+    padding-top: 2.5vh;
+    padding-bottom: 1vh;
 }
 
 div.result-board-btn {
-    padding-top: 7vh;
+    padding-top: 3vh;
     text-align: center;
+}
+
+div.score_text {
+    text-align: center;
+    color: white;
+    font-size: 30px;
+    font-weight: 600;
 }
 </style>

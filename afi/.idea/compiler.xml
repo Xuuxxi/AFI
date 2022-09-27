@@ -7,6 +7,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="matchingSystem" />
+        <module name="botrunningsystem" />
         <module name="mainBackend" />
       </profile>
     </annotationProcessing>
@@ -14,7 +16,9 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="afi" options="-parameters" />
+      <module name="botrunningsystem" options="-parameters" />
       <module name="mainBackend" options="-parameters" />
+      <module name="matchingSystem" options="-parameters" />
     </option>
   </component>
 </project>

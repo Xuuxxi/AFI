@@ -5,11 +5,25 @@ export default {
     opponent_username: "",
     opponent_photo: "",
     loser: "none",  // none、all、A、B
+    a_id: '',
+    b_id: '',
+    aMap: [],
+    bMap: [],
+    step: 0,
+    dice_num: 0,
+    a_score: 0,
+    b_score: 0
   },
   getters: {
   },
   //同步函数放这边
   mutations: {
+    updateAS(state,score){
+      state.a_score = score;
+    },
+    updateBS(state,score){
+      state.b_score = score;
+    },
     updateSocket(state, socket) {
       state.socket = socket;
     },
@@ -22,6 +36,28 @@ export default {
     },
     updateLoser(state, loser) {
       state.loser = loser;
+    },
+    updateGame(state, game) {
+      state.aMap = game.aMap;
+      state.bMap = game.bMap;
+      state.a_id = game.a_id;
+      state.b_id = game.b_id;
+      state.step = game.step;
+      state.dice_num = game.dice_num;
+    },
+    updateRoll(state, MyData){
+      state.dice_num = MyData.dice_num;
+    },
+    updateCurMap(state, MyData){
+      state.step = MyData.step;
+      state.aMap = MyData.aMap;
+      state.bMap = MyData.bMap;
+      state.dice_num = MyData.dice_num;
+    },
+    updateRes(state,MyData){
+      state.loser = MyData.loser;
+      state.a_score = MyData.a_score;
+      state.b_score = MyData.b_score;
     }
   },
   //异步函数放这里

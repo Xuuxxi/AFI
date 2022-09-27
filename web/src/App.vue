@@ -34,7 +34,8 @@ export default {
 
 <style>
 body {
-  background-image: url("@/assets/images/background.png");
-  background-size: cover;
+  /* background-image: url("@/assets/images/background.png");
+  background-size:cover; */
+  background-color: bisque;
 }
 </style>
