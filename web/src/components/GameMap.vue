@@ -1,10 +1,20 @@
 <template>
   <div class="row">
-    <div class="col-5">
-      <div class="group_but">
-        <div class="role">A GROUND</div>
-        <button v-for="(item,index) in $store.state.pk.aMap" :key="index" :value="index"
-          @click="putNum(0,index)">{{item}}</button>
+    <div class="col-1">
+      <div class="Info">
+        <div v-if="role === 'A'"><img :src="$store.state.user.photo" alt=""></div>
+        <div v-else><img :src="$store.state.pk.opponent_photo" alt=""></div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="lInfo">
+        <div v-if="role === 'A'">
+          <div class="username">{{$store.state.user.username}}</div>
+        </div>
+        <div v-else>
+          <div class="username">{{$store.state.pk.opponent_username}}</div>
+        </div>
+        <div class="rating">{{$store.state.pk.a_rating}}</div>
       </div>
     </div>
     <div class="col-2">
@@ -19,7 +29,31 @@
         <div v-else>现在是B回合</div>
       </div>
     </div>
-    <div class="col-5">
+    <div class="col-4">
+      <div class="rInfo">
+        <div v-if="role === 'B'">
+          <div class="Rusername">{{$store.state.user.username}}</div>
+        </div>
+        <div v-else>
+          <div class="Rusername">{{$store.state.pk.opponent_username}}</div>
+        </div>
+        <div class="Rrating">{{$store.state.pk.b_rating}}</div>
+      </div>
+    </div>
+    <div class="col-1">
+      <div class="Info">
+        <div v-if="role === 'B'"><img :src="$store.state.user.photo" alt=""></div>
+        <div v-else><img :src="$store.state.pk.opponent_photo" alt=""></div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="group_but">
+        <div class="role">A GROUND</div>
+        <button v-for="(item,index) in $store.state.pk.aMap" :key="index" :value="index"
+          @click="putNum(0,index)">{{item}}</button>
+      </div>
+    </div>
+    <div class="col-6">
       <div class="group_but">
         <div class="role">B GROUND</div>
         <button v-for="(item,index) in $store.state.pk.bMap" :key="index" :value="index"
@@ -31,11 +65,15 @@
 
 <script>
 import { useStore } from 'vuex';
+import { ref } from 'vue';
 
 export default {
   setup() {
     const store = useStore();
     const socket = store.state.pk.socket;
+    let role = ref('');
+    if (store.state.pk.a_id == store.state.user.id) role.value = "A";
+    else role.value = "B";
 
     const roll = () => {
       if (((store.state.user.id == store.state.pk.a_id) && (store.state.pk.step == 0)) || ((store.state.user.id == store.state.pk.b_id) && (store.state.pk.step == 1))) {
@@ -44,7 +82,7 @@ export default {
             event: "roll"
           }));
         }
-      }else{
+      } else {
         alert("还没到你的回合！");
       }
     }
@@ -80,6 +118,7 @@ export default {
     }
 
     return {
+      role,
       putNum,
       roll
     }
@@ -98,7 +137,7 @@ button {
 div.group_but {
   width: 330px;
   height: 330px;
-  margin: 10vh auto;
+  margin: 6vh auto;
 }
 
 div.dice {
@@ -109,8 +148,43 @@ div.dice {
 
 div.role {
   text-align: center;
-  color: dimgrey;
+  color: antiquewhite;
   font-size: 50px;
   font-weight: 600;
+}
+
+img {
+  width: 100%;
+  border-radius: 25%;
+}
+
+div.username {
+  font-size: 24px;
+  font-weight: 600;
+  color: black;
+  text-align: left;
+}
+
+div.rating {
+  font-size: 24px;
+  font-weight: 600;
+  color: antiquewhite;
+  font-style: oblique;
+  text-align: left;
+}
+
+div.Rusername {
+  font-size: 24px;
+  font-weight: 600;
+  color: black;
+  text-align: right;
+}
+
+div.Rrating {
+  font-size: 24px;
+  font-weight: 600;
+  color: antiquewhite;
+  font-style: oblique;
+  text-align: right;
 }
 </style>

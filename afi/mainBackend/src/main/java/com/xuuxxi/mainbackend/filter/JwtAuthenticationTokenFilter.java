@@ -2,7 +2,7 @@ package com.xuuxxi.mainbackend.filter;
 
 import com.xuuxxi.mainbackend.mapper.UserMapper;
 import com.xuuxxi.mainbackend.pojo.User;
-import com.xuuxxi.mainbackend.service.impl.securityUtil.UserDetailsImpl;
+import com.xuuxxi.mainbackend.service.impl.user.securityUtil.UserDetailsImpl;
 import com.xuuxxi.mainbackend.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.jetbrains.annotations.NotNull;

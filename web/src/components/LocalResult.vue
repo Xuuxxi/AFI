@@ -6,11 +6,18 @@
         <div class="result-board-text" v-else>
             玩家{{$store.state.pk.loser}}胜利
         </div>
-        <div class="score_text">
-            玩家A分数: {{$store.state.pk.a_score}}
+        <div v-if="$store.state.pk.a_score === 0 && $store.state.pk.b_score === 0">
+            <div class="score_text">
+                回合超时!
+            </div>
         </div>
-        <div class="score_text">
-            玩家B分数: {{$store.state.pk.b_score}}
+        <div v-else>
+            <div class="score_text">
+                玩家A分数: {{$store.state.pk.a_score}}
+            </div>
+            <div class="score_text">
+                玩家B分数: {{$store.state.pk.b_score}}
+            </div>
         </div>
         <div class="result-board-btn">
             <button @click="restart" type="button" class="btn btn-warning btn-lg">

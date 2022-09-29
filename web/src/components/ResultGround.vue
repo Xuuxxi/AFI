@@ -3,14 +3,24 @@
         <div class="result-board-text" v-if="$store.state.pk.loser === 'all'">
             平局
         </div>
+        <div class="result-board-text" v-if="($store.state.pk.loser == 'A' && $store.state.pk.a_id == $store.state.user.id) || ($store.state.pk.loser == 'B' && $store.state.pk.b_id == $store.state.user.id)">
+            你输了
+        </div>
         <div class="result-board-text" v-else>
-            玩家{{$store.state.pk.loser}}胜利
+            你赢了
         </div>
-        <div class="score_text">
-            玩家A分数: {{$store.state.pk.a_score}}
+        <div v-if="$store.state.pk.a_score === 0 && $store.state.pk.b_score === 0">
+            <div class="score_text">
+                回合超时!
+            </div>
         </div>
-        <div class="score_text">
-            玩家B分数: {{$store.state.pk.b_score}}
+        <div v-else>
+            <div class="score_text">
+                玩家A分数: {{$store.state.pk.a_score}}
+            </div>
+            <div class="score_text">
+                玩家B分数: {{$store.state.pk.b_score}}
+            </div>
         </div>
         <div class="result-board-btn">
             <button @click="restart" type="button" class="btn btn-warning btn-lg">
@@ -32,7 +42,7 @@ export default {
             store.commit("updateLoser", "none");
             store.commit("updateOpponent", {
                 username: "待匹配",
-                photo: "https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png",
+                photo: "https://img1.baidu.com/it/u=3373990605,1380325608&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1664470800&t=69ba588c27005cd51ffab1a02cb7d94c",
             })
         }
 
@@ -48,6 +58,7 @@ div.result-board {
     height: 30vh;
     width: 30vw;
     background-color: rgba(50, 50, 50, 0.5);
+    border-radius: 2.8%;
     position: absolute;
     top: 30vh;
     left: 35vw;

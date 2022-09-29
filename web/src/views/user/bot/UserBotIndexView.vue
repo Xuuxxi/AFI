@@ -1,18 +1,36 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-3">
-        <div class="card" style="margin-top: 20px">
-          <div class="card-body">
-            <img :src="$store.state.user.photo" alt="" style="width: 100%;">
+      <div class="col-2">
+        <img :src="$store.state.user.photo" alt="" style="width: 100%; border-radius: 25%; margin-top: 40px;">
+        <button type="button" data-bs-toggle="modal"
+          data-bs-target="#changeUserPhoto" style="width: 100%; margin: 10px auto; background-color: rgba(50,50,50,0.35); font-weight: 450; border-radius: 10px; color: white">更换头像</button>
+
+        <!--modal-->
+        <div class="modal fade" id="changeUserPhoto" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel">请输入头像图片URL</h6>
+              </div>
+              <div class="modal-body">
+                <input type="text" class="form-control" id="userPhoto" placeholder="图片URL" v-model="userPhoto">
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" @click="updUserPhoto">确定</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-9">
-        <div class="card" style="margin-top: 20px">
+
+      <div class="col-10">
+        <div class="card" style="margin-top: 40px">
           <div class="card-header">
-            <span style="font-size: 130%">我的Bot</span> <button type="button" class="btn btn-primary float-end"
-              data-bs-toggle="modal" data-bs-target="#addBotBut">新增Bot</button>
+            <span style="font-size: 130%">{{$store.state.user.username}}的Bot</span> <button type="button"
+              class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addBotBut">新增Bot</button>
           </div>
           <div class="card-body">
             <table class="table table-hover">
@@ -125,6 +143,7 @@ export default {
   setup() {
     const store = useStore();
     let bots = ref([]);
+    let userPhoto = ref('');
 
     const add_bot = reactive({
       title: '',
@@ -151,6 +170,27 @@ export default {
     }
 
     getBotInfo();
+
+    const updUserPhoto = () => {
+      $.ajax({
+        url: 'http://localhost:3000/user/photo/',
+        type: 'post',
+        headers: {
+          Authorization: "Bearer " + store.state.user.token
+        },
+        data: {
+          userId: store.state.user.id,
+          userPhoto: userPhoto.value
+        },
+        success(resp) {
+          if (resp.error_message === 'success') {
+            store.commit("updateUserPhoto", resp.userPhoto);
+          }
+        }
+      })
+      Modal.getInstance('#changeUserPhoto').hide();
+      userPhoto.value = '';
+    }
 
     const addBot = () => {
       add_bot.error_message = '';
@@ -192,12 +232,12 @@ export default {
           description: bot.description,
           content: bot.content,
         },
-        success(resp){
-          if(resp.error_message === 'success'){
+        success(resp) {
+          if (resp.error_message === 'success') {
             bot.error_message = '';
             Modal.getInstance('#updBotBut' + bot.id).hide();
             getBotInfo();
-          }else bot.error_message = resp.error_message;
+          } else bot.error_message = resp.error_message;
         }
       })
     }
@@ -212,8 +252,8 @@ export default {
         data: {
           bot_id: bot.id
         },
-        success(resp){
-          if(resp.error_message === 'success'){
+        success(resp) {
+          if (resp.error_message === 'success') {
             getBotInfo();
           }
         }
@@ -221,12 +261,14 @@ export default {
     }
 
     return {
+      userPhoto,
       bots,
       getBotInfo,
       add_bot,
       addBot,
       updBot,
-      delBot
+      delBot,
+      updUserPhoto
     }
   }
 }
@@ -235,5 +277,12 @@ export default {
 <style scoped>
 div.error_message {
   color: red;
+}
+
+div.username {
+  font-size: 24px;
+  font-weight: 600;
+  color: black;
+  text-align: center;
 }
 </style>

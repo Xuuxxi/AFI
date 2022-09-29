@@ -2,7 +2,7 @@ package com.xuuxxi.mainbackend.service.impl.user.account;
 
 
 import com.xuuxxi.mainbackend.pojo.User;
-import com.xuuxxi.mainbackend.service.impl.securityUtil.UserDetailsImpl;
+import com.xuuxxi.mainbackend.service.impl.user.securityUtil.UserDetailsImpl;
 import com.xuuxxi.mainbackend.service.user.account.InfoService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

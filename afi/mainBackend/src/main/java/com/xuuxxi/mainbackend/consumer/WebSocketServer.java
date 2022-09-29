@@ -32,7 +32,7 @@ public class WebSocketServer {
     // 存放当前所有的匹配对象
 
     // 不是单例模式，所以不能 @AutoWired 直接注入 UserMapper
-    private static UserMapper userMapper;
+    public static UserMapper userMapper;
 
     public static RestTemplate restTemplate;
     private static BotMapper botMapper;
@@ -81,6 +81,11 @@ public class WebSocketServer {
     }
 
     public static void startGame(Integer aId, Integer aBotId, Integer bId, Integer bBotId) {
+        //人机加入会话
+        if(bId == 114514){
+            users.put(bId, users.get(aId));
+        }
+
         User a = userMapper.selectById(aId), b = userMapper.selectById(bId);
         Bot aBot = botMapper.selectById(aBotId), bBot = botMapper.selectById(bBotId);
 
@@ -98,6 +103,8 @@ public class WebSocketServer {
         respGame.put("bMap", game.getBMap());
         respGame.put("a_id", game.getPlayerA().getId());
         respGame.put("b_id", game.getPlayerB().getId());
+        respGame.put("a_rating", a.getRating());
+        respGame.put("b_rating", b.getRating());
         respGame.put("step", 0);
         respGame.put("dice_num", 0);
 
@@ -114,7 +121,7 @@ public class WebSocketServer {
         respB.put("opponent_username", a.getUsername());
         respB.put("opponent_photo", a.getPhoto());
         respB.put("game", respGame);
-        if (users.get(b.getId()) != null)
+        if (users.get(b.getId()) != null && b.getId() != 114514)
             users.get(b.getId()).sendMsg(respB.toJSONString());
     }
 

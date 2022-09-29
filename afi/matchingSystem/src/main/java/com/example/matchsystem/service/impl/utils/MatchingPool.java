@@ -77,6 +77,7 @@ public class MatchingPool extends Thread {
         boolean[] used = new boolean[players.size()];
         for (int i = 0; i < players.size(); i++) {
             if (used[i]) continue;
+
             for (int j = i + 1; j < players.size(); j++) {
                 if (used[j]) continue;
                 Player a = players.get(i), b = players.get(j);

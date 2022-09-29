@@ -1,29 +1,17 @@
 <template>
     <div class="playground">
-        <div v-if="role === 'A'">A</div>
-        <div v-else>B</div>
-        <GameMap></GameMap>
+        <GameMap style="padding:10px 18px 18px"></GameMap>
     </div>
 </template>
   
 <script>
 import GameMap from './GameMap.vue';
-import { useStore } from 'vuex';
-import { ref } from 'vue';
 
 export default {
     components: { GameMap },
 
     setup() {
-        const store = useStore();
 
-        let role = ref('');
-        if (store.state.pk.a_id == store.state.user.id) role.value = "A";
-        else role.value = "B";
-
-        return {
-            role
-        }
     }
 }
 </script>
@@ -33,5 +21,7 @@ div.playground {
     width: 60vw;
     height: 70vh;
     margin: 40px auto;
+    background-color: rgba(50, 50, 50, 0.5);
+    border-radius: 2%;
 }
 </style>

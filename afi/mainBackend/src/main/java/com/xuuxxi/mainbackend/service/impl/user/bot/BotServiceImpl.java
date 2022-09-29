@@ -2,10 +2,11 @@ package com.xuuxxi.mainbackend.service.impl.user.bot;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xuuxxi.mainbackend.mapper.BotMapper;
 import com.xuuxxi.mainbackend.pojo.Bot;
 import com.xuuxxi.mainbackend.pojo.User;
-import com.xuuxxi.mainbackend.service.impl.securityUtil.UserDetailsImpl;
+import com.xuuxxi.mainbackend.service.impl.user.securityUtil.UserDetailsImpl;
 import com.xuuxxi.mainbackend.service.user.bot.BotService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,6 +66,14 @@ public class BotServiceImpl implements BotService {
             map.put("error_message", "代码长度不能超过10000");
             return map;
         }
+
+        QueryWrapper<Bot> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", user.getId());
+        if (botMapper.selectCount(queryWrapper) >= 10) {
+            map.put("error_message", "每个用户最多只能创建10个Bot！");
+            return map;
+        }
+
 
         Date now = new Date();
         Bot bot = new Bot(null,

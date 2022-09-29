@@ -23,12 +23,12 @@ export default {
 
         let socket = null;
 
+
         onMounted(() => {
-            store.commit("updateLoser", 'none');
-            // 初始化
+            store.commit("updateLoser", 'none'); 
             store.commit("updateOpponent", {
                 username: '待匹配',
-                photo: "https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png",
+                photo: "https://img1.baidu.com/it/u=3373990605,1380325608&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1664470800&t=69ba588c27005cd51ffab1a02cb7d94c",
             })
 
             socket = new WebSocket(socketUrl);
@@ -46,17 +46,17 @@ export default {
                         photo: data.opponent_photo
                     }),
 
-                    setTimeout(() => {
-                        store.commit("updateStatus", "playing")
-                    }, 1000);
+                        setTimeout(() => {
+                            store.commit("updateStatus", "playing")
+                        }, 1000);
 
                     store.commit("updateGame", data.game);
 
                     console.log('match!')
-                
+
                 } else if (data.event === 'result' && store.state.pk.status === 'playing') store.commit("updateRes", data);
-                else if(data.event === 'roll') store.commit("updateRoll", data);
-                else if(data.event === 'curMap') store.commit("updateCurMap",data);
+                else if (data.event === 'roll') store.commit("updateRoll", data);
+                else if (data.event === 'curMap') store.commit("updateCurMap", data);
 
                 socket.onclose = () => {
                     console.log("disconnected!")

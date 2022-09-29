@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/user/account/login/", "/user/account/register/").permitAll() //放开访问权限的url
-                .antMatchers("/pk/start/game/","/pk/receive/bot/move/").hasIpAddress("127.0.0.1")
+                .antMatchers("/pk/start/game/","/pk/receive/bot/move/", "/common/**").hasIpAddress("127.0.0.1")
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated();
 

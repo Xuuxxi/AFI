@@ -18,6 +18,6 @@ export default {
 div.content-field{
   width: 80%;
   height: 80%;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 </style>

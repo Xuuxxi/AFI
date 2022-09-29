@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +30,7 @@ public class BotController {
         Integer figure = Integer.parseInt(Objects.requireNonNull(data.getFirst("figure")));
 
         List<Integer> ownBoard = new ArrayList<>(),otherBoard = new ArrayList<>();
+
         if(aMap != null){
             aMap = aMap.substring(1,aMap.length() - 1);
             String[] tmp = aMap.split(",");

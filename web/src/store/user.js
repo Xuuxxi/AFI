@@ -27,6 +27,9 @@ export default{
       state.photo = '';
       state.is_login = false;
       state.token = '';
+    },
+    updateUserPhoto(state, photo){
+      state.photo = photo;
     }
   },
   //异步函数放这里

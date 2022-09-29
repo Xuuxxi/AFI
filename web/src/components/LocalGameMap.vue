@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-5">
       <div class="group_but">
-        <div class="role">A GROUND</div>
+        <div class="role">Rebecca GROUND</div>
         <button v-for="a in aMap" :key="a.id" :value="a.id" @click="putNum(0,a.id)">{{a.num}}</button>
       </div>
     </div>
@@ -16,7 +16,7 @@
     </div>
     <div class="col-5">
       <div class="group_but">
-        <div class="role">B GROUND</div>
+        <div class="role">Lucy GROUND</div>
         <button v-for="b in bMap" :key="b.id" :value="b.id" @click="putNum(1,b.id)">{{b.num}}</button>
       </div>
     </div>
@@ -189,7 +189,7 @@ div.dice {
 
 div.role {
   text-align: center;
-  color:dimgrey;
+  color:antiquewhite;
   font-size: 50px;
   font-weight: 600;
 }

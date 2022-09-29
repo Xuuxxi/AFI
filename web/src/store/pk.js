@@ -7,6 +7,8 @@ export default {
     loser: "none",  // none、all、A、B
     a_id: '',
     b_id: '',
+    a_rating: '',
+    b_rating: '',
     aMap: [],
     bMap: [],
     step: 0,
@@ -42,6 +44,8 @@ export default {
       state.bMap = game.bMap;
       state.a_id = game.a_id;
       state.b_id = game.b_id;
+      state.a_rating = game.a_rating;
+      state.b_rating = game.b_rating;
       state.step = game.step;
       state.dice_num = game.dice_num;
     },

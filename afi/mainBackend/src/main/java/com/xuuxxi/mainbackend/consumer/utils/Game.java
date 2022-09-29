@@ -2,7 +2,9 @@ package com.xuuxxi.mainbackend.consumer.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xuuxxi.mainbackend.consumer.WebSocketServer;
+import com.xuuxxi.mainbackend.mapper.UserMapper;
 import com.xuuxxi.mainbackend.pojo.Bot;
+import com.xuuxxi.mainbackend.pojo.User;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.Arrays;
@@ -87,14 +89,25 @@ public class Game extends Thread {
 
     private void setBotCode(Player player) {
         if (player.getBotId().equals(-1)) return;
-        if((player.getId().equals(playerA.getId()) && step == 0) || (player.getId().equals(playerB.getId()) && step == 1)) roll();
+        if ((player.getId().equals(playerA.getId()) && step == 0) || (player.getId().equals(playerB.getId()) && step == 1))
+            roll();
+
+        //aMap == ownBoard  bMap = otherBoard
         LinkedMultiValueMap<String, String> data = new LinkedMultiValueMap<>();
         data.add("user_id", player.getId().toString());
         data.add("bot_code", player.getBotCode());
-        data.add("aMap", Arrays.toString(aMap));
-        data.add("bMap", Arrays.toString(bMap));
-        data.add("figure", dice_num.toString());
-        WebSocketServer.restTemplate.postForObject(addBotUrl, data, String.class);
+
+        if (player.getId().equals(playerA.getId()) && step == 0) {
+            data.add("aMap", Arrays.toString(aMap));
+            data.add("bMap", Arrays.toString(bMap));
+            data.add("figure", dice_num.toString());
+            WebSocketServer.restTemplate.postForObject(addBotUrl, data, String.class);
+        } else if (player.getId().equals(playerB.getId()) && step == 1) {
+            data.add("bMap", Arrays.toString(aMap));
+            data.add("aMap", Arrays.toString(bMap));
+            data.add("figure", dice_num.toString());
+            WebSocketServer.restTemplate.postForObject(addBotUrl, data, String.class);
+        }
     }
 
     //投骰子
@@ -112,6 +125,7 @@ public class Game extends Thread {
     //检查下一步操作并切换当前操作用户
     private boolean nextStep() {
         //最快两毫秒操作一次
+        //给 200 * 100 时间输入
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -137,7 +151,7 @@ public class Game extends Thread {
 
     //检查消除
     private void setMap() {
-        try{
+        try {
             lock.lock();
             Integer num = dice_num;
             if (step == 0) {
@@ -149,7 +163,7 @@ public class Game extends Thread {
                 bMap[pos] = num;
                 for (int i = pos / 3 * 3; i < pos / 3 * 3 + 3; i++) if (aMap[i].equals(num)) aMap[i] = 0;
             }
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -178,9 +192,10 @@ public class Game extends Thread {
         int a_score = countMap(aMap);
         int b_score = countMap(bMap);
 
-        if (a_score > b_score) loser = "A";
-        else if (a_score < b_score) loser = "B";
+        if (a_score > b_score) loser = "B";
+        else if (a_score < b_score) loser = "A";
         else loser = "all";
+        System.out.println("loser = " + loser + " aS = " + a_score + " bS = " + b_score);
 
         getPlayerA().setScore(a_score);
         getPlayerB().setScore(b_score);
@@ -231,8 +246,34 @@ public class Game extends Thread {
     private void sendAllMsg(String msg) {
         if (WebSocketServer.users.get(playerA.getId()) != null)
             WebSocketServer.users.get(playerA.getId()).sendMsg(msg);
-        if (WebSocketServer.users.get(playerB.getId()) != null)
+        if (WebSocketServer.users.get(playerB.getId()) != null && playerB.getId() != 114514)
             WebSocketServer.users.get(playerB.getId()).sendMsg(msg);
+    }
+
+    private void RatingUpdate() {
+        //赢了 + 10分，输了 - 5分。
+        if (playerB.getId() == 114514) return;
+        UserMapper userMapper = WebSocketServer.userMapper;
+
+        if ("B".equals(loser)) {
+            User userA = userMapper.selectById(playerA.getId());
+            userA.setRating(userA.getRating() + 10);
+            userMapper.updateById(userA);
+
+            User userB = userMapper.selectById(playerB.getId());
+            userB.setRating(userB.getRating() - 5);
+            userMapper.updateById(userB);
+        }
+
+        if ("A".equals(loser)) {
+            User userA = userMapper.selectById(playerA.getId());
+            userA.setRating(userA.getRating() - 5);
+            userMapper.updateById(userA);
+
+            User userB = userMapper.selectById(playerB.getId());
+            userB.setRating(userB.getRating() + 10);
+            userMapper.updateById(userB);
+        }
     }
 
     //广播结果
@@ -242,8 +283,13 @@ public class Game extends Thread {
         resp.put("loser", loser);
         resp.put("a_score", playerA.getScore());
         resp.put("b_score", playerB.getScore());
+        RatingUpdate();
 
         sendAllMsg(resp.toJSONString());
+
+        if (playerB.getId() == 114514) {
+            WebSocketServer.users.remove(114514);
+        }
     }
 
     //广播移动
