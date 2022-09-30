@@ -3,8 +3,10 @@
     <div class="row">
       <div class="col-2">
         <img :src="$store.state.user.photo" alt="" style="width: 100%; border-radius: 25%; margin-top: 40px;">
-        <button type="button" data-bs-toggle="modal"
-          data-bs-target="#changeUserPhoto" style="width: 100%; margin: 10px auto; background-color: rgba(50,50,50,0.35); font-weight: 450; border-radius: 10px; color: white">更换头像</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#changeUserPhoto"
+          style="width: 100%; margin: 10px auto; background-color: rgba(50,50,50,0.35); font-weight: 450; border-radius: 10px; color: white">更换头像</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#showExBot"
+          style="width: 100%; margin: 10px auto; background-color: rgba(50,50,50,0.35); font-weight: 450; border-radius: 10px; color: white">Bot示例</button>
 
         <!--modal-->
         <div class="modal fade" id="changeUserPhoto" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -20,6 +22,21 @@
                   <button type="button" class="btn btn-primary" @click="updUserPhoto">确定</button>
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="showExBot" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel">Bot 示例</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <VAceEditor v-model:value="addBotRemind" @init="editorInit" lang="java" theme="textmate"
+                  style="height: 300px" />
               </div>
             </div>
           </div>
@@ -72,8 +89,8 @@
                             </div>
                             <div class="mb-3">
                               <label for="botContent" class="form-label">代码</label>
-                              <textarea class="form-control" id="botContent" rows="7" placeholder="请输入Bot代码"
-                                v-model="bot.content"></textarea>
+                              <VAceEditor v-model:value="bot.content" @init="editorInit" lang="java" theme="textmate"
+                                style="height: 300px" />
                             </div>
                           </div>
                           <div class="modal-footer">
@@ -115,9 +132,9 @@
               v-model="add_bot.description"></textarea>
           </div>
           <div class="mb-3">
-            <label for="botContent" class="form-label">代码</label>
-            <textarea class="form-control" id="botContent" rows="7" placeholder="请输入Bot代码"
-              v-model="add_bot.content"></textarea>
+            <label for="add-bot-code" class="form-label">代码</label>
+            <VAceEditor v-model:value="add_bot.content" @init="editorInit" lang="java" theme="textmate"
+              style="height: 300px"></VAceEditor>
           </div>
         </div>
         <div class="modal-footer">
@@ -135,12 +152,37 @@ import $ from 'jquery'
 import { useStore } from 'vuex'
 import { ref, reactive } from 'vue'
 import { Modal } from 'bootstrap/dist/js/bootstrap'
+import { VAceEditor } from 'vue3-ace-editor';
+import ace from 'ace-builds';
 
 export default {
   components: {
+    VAceEditor
   },
 
   setup() {
+    ace.config.set(
+      "basePath",
+      "https://cdn.jsdelivr.net/npm/ace-builds@" + require('ace-builds').version + "/src-noconflict/")
+
+
+
+    const addBotRemind = ref(`package com.kob.botrunningsystem.service.utils;
+import java.util.List;
+
+public class Bot implements com.kob.botrunningsystem.service.utils.BotAi {
+    @Override
+    public Integer nextStep(List<Integer> ownBoard, List<Integer> otherBoard, Integer figure) {
+        /*
+         请在此处编辑你的bot逻辑代码
+         */
+        
+        //在此处返回下一步结果
+        return null;
+    }
+}`);
+
+
     const store = useStore();
     let bots = ref([]);
     let userPhoto = ref('');
@@ -160,7 +202,6 @@ export default {
           Authorization: "Bearer " + store.state.user.token
         },
         success(resp) {
-          console.log(resp);
           bots.value = resp;
         },
         error(resp) {
@@ -263,6 +304,7 @@ export default {
     return {
       userPhoto,
       bots,
+      addBotRemind,
       getBotInfo,
       add_bot,
       addBot,

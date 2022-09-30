@@ -3,12 +3,18 @@
     <div class="col-5">
       <div class="group_but">
         <div class="role">Rebecca GROUND</div>
-        <button v-for="a in aMap" :key="a.id" :value="a.id" @click="putNum(0,a.id)">{{a.num}}</button>
+        <button v-for="a in aMap" :key="a.id" :value="a.id" @click="putNum(0,a.id)" :style="'background: url(' + dice_pic[a.num] + ') no-repeat;'"></button>
       </div>
     </div>
     <div class="col-2">
-      <div class="dice">
-        <button @click="roll">{{dice_num}}</button>
+      <div class="diceGround">
+        <input type="checkbox" id="dice" @click="roll" :checked="dice_num">
+
+        <label for="dice">
+          <div
+            :class="dice_num === 1 ? 'dice1' : (dice_num === 2 ? 'dice2' : ((dice_num === 3 ? 'dice3' : (dice_num === 4 ? 'dice4' : (dice_num === 5 ? 'dice5' : (dice_num === 6 ? 'dice6' : 'dice'))))))">
+          </div>
+        </label>
       </div>
       <div class="badge bg-primary text-wrap" style="width: 100%;margin: 0 auto;">
         {{msg}}
@@ -17,7 +23,7 @@
     <div class="col-5">
       <div class="group_but">
         <div class="role">Lucy GROUND</div>
-        <button v-for="b in bMap" :key="b.id" :value="b.id" @click="putNum(1,b.id)">{{b.num}}</button>
+        <button v-for="b in bMap" :key="b.id" :value="b.id" @click="putNum(1,b.id)" :style="'background: url(' + dice_pic[b.num] + ') no-repeat;'"></button>
       </div>
     </div>
   </div>
@@ -26,6 +32,7 @@
 <script>
 import { ref } from 'vue';
 import { useStore } from 'vuex';
+import '@/assets/css/DiceCss.css';
 
 export default {
   setup() {
@@ -35,11 +42,20 @@ export default {
     let step;
     let msg;
     const store = useStore();
+    let dice_pic = ref([
+      'https://pic1.imgdb.cn/item/6336928816f2c2beb15f2b09.png',
+      'https://pic1.imgdb.cn/item/63368a3216f2c2beb15612c9.png',
+      'https://pic1.imgdb.cn/item/63368a3216f2c2beb15612d0.png',
+      'https://pic1.imgdb.cn/item/63368a3216f2c2beb15612c3.png',
+      'https://pic1.imgdb.cn/item/63368a3516f2c2beb1561793.png',
+      'https://pic1.imgdb.cn/item/63368a3516f2c2beb15617a2.png',
+      'https://pic1.imgdb.cn/item/63368a3516f2c2beb15617b1.png'
+    ]);
 
     const init = () => {
       aMap = ref([{ id: 0, num: 0 }, { id: 1, num: 0 }, { id: 2, num: 0 }, { id: 3, num: 0 }, { id: 4, num: 0 }, { id: 5, num: 0 }, { id: 6, num: 0 }, { id: 7, num: 0 }, { id: 8, num: 0 }]);
       bMap = ref([{ id: 0, num: 0 }, { id: 1, num: 0 }, { id: 2, num: 0 }, { id: 3, num: 0 }, { id: 4, num: 0 }, { id: 5, num: 0 }, { id: 6, num: 0 }, { id: 7, num: 0 }, { id: 8, num: 0 }]);
-      dice_num = ref("投掷");
+      dice_num = ref(0);
       step = ref(0);
       msg = ref('现在是A回合');
     }
@@ -141,7 +157,7 @@ export default {
     }
 
     const putNum = (f, pos) => {
-      if (dice_num.value === '投掷') {
+      if (dice_num.value === 0) {
         alert('请先投掷骰子');
         return;
       }
@@ -149,7 +165,7 @@ export default {
       if (res != 'success') alert(res);
       else {
         judge_full();
-        dice_num.value = '投掷';
+        dice_num.value = 0;
         msg.value = (msg.value === '现在是A回合' ? '现在是B回合' : '现在是A回合');
       }
     }
@@ -160,6 +176,7 @@ export default {
       dice_num,
       step,
       msg,
+      dice_pic,
       putNum,
       roll
     }
@@ -171,8 +188,9 @@ export default {
 button {
   width: 100px;
   height: 100px;
-  border-radius: 15%;
+  border-radius: 20%;
   margin: 5px 5px 5px 5px;
+  border-style: none;
 }
 
 div.group_but {
@@ -181,7 +199,7 @@ div.group_but {
   margin: 10vh auto;
 }
 
-div.dice {
+div.diceGround {
   width: 110px;
   height: 110px;
   margin: 2vh auto;
@@ -189,7 +207,7 @@ div.dice {
 
 div.role {
   text-align: center;
-  color:antiquewhite;
+  color: antiquewhite;
   font-size: 50px;
   font-weight: 600;
 }

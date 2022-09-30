@@ -35,7 +35,7 @@ public class WebSocketServer {
     public static UserMapper userMapper;
 
     public static RestTemplate restTemplate;
-    private static BotMapper botMapper;
+    public static BotMapper botMapper;
 
     public Game game = null;
     private final static String addPlayerUrl = "http://127.0.0.1:3001/player/add/";
@@ -164,6 +164,10 @@ public class WebSocketServer {
             move(data.getInteger("direction"));
         } else if ("roll".equals(event)){
             game.roll();
+        } else if ("startBot".equals(event)){
+            game.startBot(data.getString("user_id"));
+        } else if ("stopBot".equals(event)){
+            game.stopBot(data.getString("user_id"));
         }
     }
 

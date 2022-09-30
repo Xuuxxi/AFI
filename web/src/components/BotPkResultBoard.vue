@@ -61,6 +61,7 @@ div.result-board {
     position: absolute;
     top: 30vh;
     left: 35vw;
+    border-radius: 20px;
 }
 
 div.result-board-text {

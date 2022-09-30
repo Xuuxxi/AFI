@@ -218,6 +218,33 @@ public class Game extends Thread {
         }
     }
 
+    //开启托管
+    public void startBot(String userId){
+        Integer curId = Integer.parseInt(userId);
+        System.out.println("userId = " + curId + " 开启托管");
+        if(playerA.getId().equals(curId)){
+            playerA.setBotId(114514);
+            playerA.setBotCode(WebSocketServer.botMapper.selectById(114514).getContent());
+            setBotCode(playerA);
+        }else if(playerB.getId().equals(curId)){
+            playerB.setBotId(114514);
+            playerB.setBotCode(WebSocketServer.botMapper.selectById(114514).getContent());
+            setBotCode(playerB);
+        }
+    }
+
+    public void stopBot(String userId){
+        Integer curId = Integer.parseInt(userId);
+        System.out.println("userId = " + curId + " 停止托管");
+        if(playerA.getId().equals(curId)){
+            playerA.setBotId(-1);
+            playerA.setBotCode("");
+        }else if(playerB.getId().equals(curId)){
+            playerB.setBotId(-1);
+            playerB.setBotCode("");
+        }
+    }
+
     @Override
     public void run() {
         for (int i = 0; i < 1000; i++) {

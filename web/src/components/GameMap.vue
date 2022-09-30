@@ -2,7 +2,13 @@
   <div class="row">
     <div class="col-1">
       <div class="Info">
-        <div v-if="role === 'A'"><img :src="$store.state.user.photo" alt=""></div>
+        <div v-if="role === 'A'">
+          <img :src="$store.state.user.photo" alt="">
+          <button v-if="playByBot === 0" type="button" class="btn btn-success"
+            style="width: 100%; margin-top: 9px; border-radius: 10px;" @click="startBot">托管</button>
+          <button v-else type="button" class="btn btn-success"
+            style="width: 100%; margin-top: 9px; border-radius: 10px;" @click="stopBot">取消</button>
+        </div>
         <div v-else><img :src="$store.state.pk.opponent_photo" alt=""></div>
       </div>
     </div>
@@ -18,11 +24,18 @@
       </div>
     </div>
     <div class="col-2">
-      <div class="dice">
-        <button @click="roll">
+      <div class="diceGround">
+        <!-- <button @click="roll">
           <div v-if="$store.state.pk.dice_num === 0">投掷</div>
           <div v-else>{{$store.state.pk.dice_num}}</div>
-        </button>
+        </button> -->
+        <input type="checkbox" id="dice" @click="roll" :checked="$store.state.pk.dice_num">
+
+        <label for="dice">
+          <div
+            :class="$store.state.pk.dice_num === 1 ? 'dice1' : ($store.state.pk.dice_num === 2 ? 'dice2' : (($store.state.pk.dice_num === 3 ? 'dice3' : ($store.state.pk.dice_num === 4 ? 'dice4' : ($store.state.pk.dice_num === 5 ? 'dice5' : ($store.state.pk.dice_num === 6 ? 'dice6' : 'dice'))))))">
+          </div>
+        </label>
       </div>
       <div class="badge bg-primary text-wrap" style="width: 100%;margin: 0 auto;">
         <div v-if="$store.state.pk.step === 0">现在是A回合</div>
@@ -42,22 +55,29 @@
     </div>
     <div class="col-1">
       <div class="Info">
-        <div v-if="role === 'B'"><img :src="$store.state.user.photo" alt=""></div>
+        <div v-if="role === 'B'">
+          <img :src="$store.state.user.photo" alt="">
+          <button v-if="playByBot === 0" type="button" class="btn btn-success"
+            style="width: 100%; margin-top: 9px; border-radius: 10px;" @click="startBot">托管</button>
+          <button v-else type="button" class="btn btn-success"
+            style="width: 100%; margin-top: 9px; border-radius: 10px;" @click="stopBot">取消</button>
+        </div>
         <div v-else><img :src="$store.state.pk.opponent_photo" alt=""></div>
       </div>
     </div>
     <div class="col-6">
       <div class="group_but">
         <div class="role">A GROUND</div>
-        <button v-for="(item,index) in $store.state.pk.aMap" :key="index" :value="index"
-          @click="putNum(0,index)">{{item}}</button>
+        <button v-for="(item,index) in $store.state.pk.aMap" :key="index" :value="index" @click="putNum(0,index)"
+          :style="'background: url(' + dice_pic[item] + ') no-repeat;'">
+        </button>
       </div>
     </div>
     <div class="col-6">
       <div class="group_but">
         <div class="role">B GROUND</div>
-        <button v-for="(item,index) in $store.state.pk.bMap" :key="index" :value="index"
-          @click="putNum(1,index)">{{item}}</button>
+        <button v-for="(item,index) in $store.state.pk.bMap" :key="index" :value="index" @click="putNum(1,index)"
+          :style="'background: url(' + dice_pic[item] + ') no-repeat;'"></button>
       </div>
     </div>
   </div>
@@ -66,12 +86,24 @@
 <script>
 import { useStore } from 'vuex';
 import { ref } from 'vue';
+import '@/assets/css/DiceCss.css'
 
 export default {
   setup() {
     const store = useStore();
     const socket = store.state.pk.socket;
     let role = ref('');
+    let dice_pic = ref([
+      'https://pic1.imgdb.cn/item/6336928816f2c2beb15f2b09.png',
+      'https://pic1.imgdb.cn/item/63368a3216f2c2beb15612c9.png',
+      'https://pic1.imgdb.cn/item/63368a3216f2c2beb15612d0.png',
+      'https://pic1.imgdb.cn/item/63368a3216f2c2beb15612c3.png',
+      'https://pic1.imgdb.cn/item/63368a3516f2c2beb1561793.png',
+      'https://pic1.imgdb.cn/item/63368a3516f2c2beb15617a2.png',
+      'https://pic1.imgdb.cn/item/63368a3516f2c2beb15617b1.png'
+    ]);
+    let playByBot = ref(0);
+
     if (store.state.pk.a_id == store.state.user.id) role.value = "A";
     else role.value = "B";
 
@@ -117,21 +149,42 @@ export default {
       }
     }
 
+    const startBot = () => {
+      playByBot.value = 1;
+      socket.send(JSON.stringify({
+        event: "startBot",
+        user_id: store.state.user.id
+      }))
+    }
+
+    const stopBot = () => {
+      playByBot.value = 0;
+      socket.send(JSON.stringify({
+        event: "stopBot",
+        user_id: store.state.user.id
+      }))
+    }
+
     return {
       role,
+      dice_pic,
+      playByBot,
       putNum,
-      roll
+      roll,
+      startBot,
+      stopBot
     }
   }
 }
 </script>
 
 <style scoped>
-button {
+div.group_but>button {
   width: 100px;
   height: 100px;
-  border-radius: 15%;
+  border-radius: 20%;
   margin: 5px 5px 5px 5px;
+  border-style: none;
 }
 
 div.group_but {
@@ -140,9 +193,9 @@ div.group_but {
   margin: 6vh auto;
 }
 
-div.dice {
-  width: 110px;
-  height: 110px;
+div.diceGround {
+  width: 100px;
+  height: 100px;
   margin: 2vh auto;
 }
 

@@ -3,11 +3,14 @@
         <div class="result-board-text" v-if="$store.state.pk.loser === 'all'">
             平局
         </div>
-        <div class="result-board-text" v-if="($store.state.pk.loser == 'A' && $store.state.pk.a_id == $store.state.user.id) || ($store.state.pk.loser == 'B' && $store.state.pk.b_id == $store.state.user.id)">
+        <div class="result-board-text"
+            v-if="($store.state.pk.loser == 'A' && $store.state.pk.a_id == $store.state.user.id) || ($store.state.pk.loser == 'B' && $store.state.pk.b_id == $store.state.user.id)">
             你输了
+            <div class="rank_text">RANK分 -5</div>
         </div>
         <div class="result-board-text" v-else>
             你赢了
+            <div class="rank_text">RANK分 +10!</div>
         </div>
         <div v-if="$store.state.pk.a_score === 0 && $store.state.pk.b_score === 0">
             <div class="score_text">
@@ -15,11 +18,13 @@
             </div>
         </div>
         <div v-else>
-            <div class="score_text">
-                玩家A分数: {{$store.state.pk.a_score}}
+            <div class="score_text" v-if="$store.state.user.id == $store.state.pk.a_id">
+                {{$store.state.user.username}}分数: {{$store.state.pk.a_score}}<br>
+                {{$store.state.pk.opponent_username}}: {{$store.state.pk.b_score}}
             </div>
-            <div class="score_text">
-                玩家B分数: {{$store.state.pk.b_score}}
+            <div class="score_text" v-else>
+                {{$store.state.user.username}}分数: {{$store.state.pk.b_score}}<br>
+                {{$store.state.pk.opponent_username}}分数: {{$store.state.pk.a_score}}
             </div>
         </div>
         <div class="result-board-btn">
@@ -55,10 +60,10 @@ export default {
 
 <style scoped>
 div.result-board {
-    height: 30vh;
+    height: 35vh;
     width: 30vw;
     background-color: rgba(50, 50, 50, 0.5);
-    border-radius: 2.8%;
+    border-radius: 20px;
     position: absolute;
     top: 30vh;
     left: 35vw;
@@ -84,5 +89,12 @@ div.score_text {
     color: white;
     font-size: 30px;
     font-weight: 600;
+}
+
+div.rank_text {
+    text-align: center;
+    color: antiquewhite;
+    font-size: 25px;
+    font-weight: 400;
 }
 </style>
