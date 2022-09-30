@@ -6,8 +6,8 @@
 
 * find . -name '*.java' | xargs cat | wc -l
 
-  > 2418
+  > 2472
 
-* find . -name '*.vue' | xargs cat
+* find . -name '*.vue' | xargs cat | wc -l
 
-  > 2306
+  > 2513
