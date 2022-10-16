@@ -99,7 +99,7 @@ export default {
         let b = aMap.value[i * 3 + 1].num;
         let c = aMap.value[i * 3 + 2].num;
 
-        if (a === b === c) a_score += a * 9;
+        if (a == b == c) a_score += a * 9;
         else if (a === b) a_score += a * 4 + c;
         else if (a === c) a_score += a * 4 + b;
         else if (b === c) a_score += b * 4 + a;
@@ -111,7 +111,7 @@ export default {
         let b = bMap.value[i * 3 + 1].num;
         let c = bMap.value[i * 3 + 2].num;
 
-        if (a === b === c) b_score += a * 9;
+        if (a == b == c) b_score += a * 9;
         else if (a === b) b_score += a * 4 + c;
         else if (a === c) b_score += a * 4 + b;
         else if (b === c) b_score += b * 4 + a;

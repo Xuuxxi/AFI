@@ -1,7 +1,7 @@
 <template>
     <div class="result-board">
         <div class="result-board-text" v-if="$store.state.pk.loser === 'all'">
-            难得的和平结局!
+            平局咯
         </div>
         <div class="result-board-text-lose" v-if="$store.state.pk.loser === 'A'">
             亚当胜利!
